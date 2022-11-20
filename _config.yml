@@ -24,7 +24,7 @@ title: Hatstand                          # the main title
 tagline: Random blogs which may or may not be useful to someone   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
-  Very occasional blogs about tech topics
+  Very occasional blogs about tech topics.
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: 'https://www.hatstand.org/'
