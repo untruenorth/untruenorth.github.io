@@ -10,7 +10,7 @@ img_path: /assets/20221120-userver/
 
 TL;DR: TrueNAS SCALE on a Gen8 HP Microserver is a bit of a faff. This is what worked for me.
 
-## Well, d'uh?
+## Le preamble
 
 I picked up a cheap Gen 8 Microserver recently, viewing it as a way to move up a step from cheap underpowered Lenovo and Synology RAID boxes, as well as to get onto something less vendor-locked, hence TrueNAS. 
 
