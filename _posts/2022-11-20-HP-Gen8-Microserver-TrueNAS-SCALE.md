@@ -22,16 +22,16 @@ However, I'd heard vague, non-specific, rumours suggesting that the BIOS on the 
 
 ## Round 1
 
-I started fiddling with this months ago, but hit a brick wall, so put it aside for _some time_. Some of these recollections are fuzzy. I don't write everthing down as I do it like Jeff Geerling.
+I started fiddling with this months ago - probably early 2022 - but hit a brick wall, so put it aside for _some time_. Some of these recollections are fuzzy. I don't write everthing down as I do it like Jeff Geerling.
 
 The initial sequence of ~~disappointment~~ events was as follows:
 1. Acquire server
 1. Rip out the optical drive, replace with a smallish SATA SSD, complete with molex-to-SATA power adapter
 1. Upgrade the weak-sauce CPU to something Xeon-y
-1. Buy the wrong sort of RAM upgrade, stick with the 4GB it came with
+1. Buy the wrong sort of RAM upgrade, resolve to stick with the 4GB it came with
 1. Grab TrueNAS SCALE[^1] & burn to a USB stick
 1. Fiddle with the BIOS to ensure USB booting was a thing
-1. Boot!
+1. Boot the installer!
 1. Install!
 1. Reboot!
 1. \<_fails to boot_\> Oh.
@@ -42,7 +42,7 @@ The initial sequence of ~~disappointment~~ events was as follows:
 
 That funky BIOS? Yeah. In summary:
 
-- Boot off USB thumb drive attached to internal or externa ports? Absolutely.
+- Boot off USB thumb drive attached to internal or external ports? Absolutely.
 - Boot off internal microSD card? Absolutely.
 - Boot off something large on the end of a USB-to-SATA converter? Nope. 
 - Boot off something large on the end of a USB-to-M.2/mSATA converter? Nope. 
@@ -50,7 +50,7 @@ That funky BIOS? Yeah. In summary:
 
 The _innernet_ claims that it will happily boot off the first drive in the HDD bays though, so all good, right? 
 
-Wrong: if you're using something like TrueNAS, it'll (reasonably) want that drive all to itself, so you lose that slot to hosting the OS.  Further consider that the first drive bay is one of only two 6Gbps ports, and... also no.
+Wrong: if you're using something like TrueNAS, it'll (reasonably) want that drive all to itself, so you lose that SATA slot to hosting the OS.  Further consider that the first drive bay is one of only two 6Gbps ports, and... also no.
 
 The innernet _also_ claims that the route forward is to
 1. Install TrueNAS SCALE to the place you really want it running from - in my case, the SATA SSD on the optical drive SATA port
@@ -62,7 +62,7 @@ That seems entirely sensible but, at the time, piecing together multiple pages o
 
 ## Round 2
 
-Initial frustration a memory, I had anoter go around at getting the thing to boot from the device of my choosing.  This time around, I stubled over some (german language) advice for writing GRUB configs that _might_ work. 
+Initial frustration a memory, I had anoter go around at getting the thing to boot from the device of my choosing.  This time around, I stubled on some (german language) advice for installing GRUB with a config that _might just_ work. 
 
 With this in mind, my starting point was:
 1. A 250GB SSD in on the optical drive SATA connection, "air mounted" in the top of the Microserver
@@ -81,13 +81,13 @@ Prep the microSD card
 
 Then stuff it in the Microserver - everything else will happen there. 
 
-Next, install TrueNAS scale from its USB installer thumb drive. Remove the installer thum drive and let it reboot - whereupon it'll fail to find something to boot from). Not documented here because (a) it's well documented elsewhere (b) it's _done_ already and (c) I didn't take notes[^4].
+Next, install TrueNAS scale from its USB installer thumb drive. Then remove the installer thumb drive and let it reboot - whereupon it'll fail to find something to boot from). Not documented here because (a) it's well documented elsewhere; (b) it's _done_ already; and (c) I didn't take notes[^4].
 
-[^4]: By the time you've been through about 20 POST-install-reboot-POST-bootfail-POST-fiddle-reboot-POST-bootfail loops... you'd quit taking notes too
+[^4]: By the time you've been through about 20 POST-install-reboot-POST-bootfail-POST-fiddle-reboot-POST-bootfail loops... you'd quit taking notes too, especially given that each POST takes about 30 seconds. WTF HP, WTF.
 
-Now swap installer thumb drives - and boot from the Ubuntu installer and select the option to Try Ubuntu.
+Now swap installer thumb drives, then boot from the Ubuntu installer and select the option to Try Ubuntu.
 
-Once in Ubuntu, grab a shell, figure out which device corresponds to your microSD card. Knowing how big it is will help here. I brute force likely devices using:
+Once in Ubuntu, grab a shell, figure out which device corresponds to your microSD card. Knowing how big it is will help here. I brute force likely devices using and look for a likely sd* device of the right capacity:
 
 ```console
 dmesg | fgrep sd
@@ -175,9 +175,9 @@ menuentry 'TrueNAS SCALE hd1' {
 ```
 
 
-> **Beware:** The `hdX` references WILL NOT line up with `/dev/sdX` references from `dmesg` once Linux has booted.
+> **Beware:** The `hdX` references WILL NOT line up with `/dev/sdX` references from `dmesg` once Linux has booted.  The hdX numbers appear to reflect drives _actually installed_ in the not-actually-hot-swap SATA bays and the optical drive port.
 {: .prompt-warning }
-> This is all from the BIOS's perspective.  What this gives me, in my circumstances, is a way to boot from the SSD on the optical drive SATA connector, whether I've got 0, 1, 2, 3 or 4 drives in the not-actually-hot-swap SATA bays.  You can use the `default` variable to pick which one will be chosen once the 10 second `timeout` expires, and I _assume_ it'll fall back to a prompt if, say, you've added or removed a drive causing the TrueNAS drive to change number.  
+> This is all from the BIOS's perspective.  What this gives me, in my circumstances, is a way to boot from the SSD on the optical drive SATA connector, whether I've got 0, 1, 2, 3 or 4 drives in the not-actually-hot-swap SATA bays. You can use the `default` variable to pick which one will be chosen once the 10 second `timeout` expires, and I _assume_ it'll fall back to a prompt if, say, you've added or removed a drive causing the TrueNAS drive to change number.  
 {: .prompt-info }
 
 Save that file, and unmount the microSD card:
@@ -187,7 +187,7 @@ cd /
 umount /tmp/usb
 ```
 
-Finally, reboot (remembering to yank out the Ubuntu installed USB thumb drive so you don't go back down the rabbit hole).
+Finally, reboot (remembering to yank out the Ubuntu installer USB thumb drive so you don't go back down _that_ rabbit hole).
 
 Now you should find that the Microserver boots off the microSD card and lets you pick one of five options that will _then_ boot Linux off the TrueNAS SCALE drive on the optical drive port. 
 
@@ -195,7 +195,7 @@ Good luck.
 
 ## The end!
 
-Hope that helps anyone on the same journey I was on, and also perhaps lacking time (willpower, experiences, whatever) to figure out the fine-grain details of GRUB vs the Gen8 Microserver BIOS.
+Hope that helps anyone on the same journey I was on, and also perhaps lacking time (willpower, experience, chops, whatever) to figure out the fine-grain details of GRUB vs the Gen8 Microserver BIOS.
 
 Thanks to [IdleBit](https://www.bastelbunker.de/author/shojo/) for writing the [instructions](https://www.bastelbunker.de/hp-microserver-gen8-booten-von-den-odd-port/) that got me nearly all the way here.
 
