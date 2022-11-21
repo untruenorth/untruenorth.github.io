@@ -62,7 +62,7 @@ That seems entirely sensible but, at the time, piecing together multiple pages o
 
 ## Round 2
 
-Initial frustration a memory, I had anoter go around at getting the thing to boot from the device of my choosing.  This time around, I stubled on some (german language) advice for installing GRUB with a config that _might just_ work. 
+Initial frustration a memory, I had another go around at getting the thing to boot from the device of my choosing.  This time around, I stumbled on some (german language) advice for installing GRUB with a config that _might just_ work. 
 
 With this in mind, my starting point was:
 1. A 250GB SSD in on the optical drive SATA connection, "air mounted" in the top of the Microserver
@@ -87,7 +87,7 @@ Next, install TrueNAS scale from its USB installer thumb drive. Then remove the 
 
 Now swap installer thumb drives, then boot from the Ubuntu installer and select the option to Try Ubuntu.
 
-Once in Ubuntu, grab a shell, figure out which device corresponds to your microSD card. Knowing how big it is will help here. I brute force likely devices using and look for a likely sd* device of the right capacity:
+Once in Ubuntu, grab a shell, figure out which device corresponds to your microSD card. Knowing how big it is will help here. I brute force likely devices using `dmesg` and look for a likely sd* device of the right capacity:
 
 ```console
 dmesg | fgrep sd
