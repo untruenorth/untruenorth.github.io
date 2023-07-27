@@ -9,9 +9,9 @@
 !.versionrc.json
 !.stylelintrc.json
 
-# bundler cache
+# Jekyll cache
+.jekyll-cache
 _site
-vendor
 
 # rubygem
 *.gem
@@ -19,3 +19,10 @@ vendor
 # npm dependencies
 node_modules
 package-lock.json
+
+# IDE configurations
+.idea
+.vscode
+
+# Misc
+assets/js/dist
